@@ -5,7 +5,7 @@ def searchPubmed():
     pubMedDate = {}
     pubMedDate2 = {}
 
-    Entrez.email = 'A.N.Other@example.com'
+    Entrez. = 'A.N.Other@example.com'
 
     startdate = 1970
     enddate = 2020
@@ -26,16 +26,16 @@ def searchPubmed():
         date = date + 5
 
     # plotting the points
-    plt.plot(pubMedDate.keys(), pubMedDate.values(),color='r', label='retina')
+    plt.plot(pubMedDate.keys(), pubMedDate.values(),='r', label='retina')
     plt.plot(pubMedDate2.keys(), pubMedDate2.values(), color='g', label='testos')
     # naming the x axis
     plt.xlabel('jaar')
     plt.xticks(rotation=90,fontsize=6)
     # naming the y axis
     plt.ylabel('hits')
-    # giving a title to my graph
+    # giving a title to  graph
     plt.title(f'Hits per 5 jaar, van {startdate} tot {enddate}')
-    # function to show the plot
+    # function to  the plot
     plt.show()
 
 if __name__ == '__main__':
