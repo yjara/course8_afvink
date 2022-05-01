@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style of the header */
+header {
+  background-color: #666;
+  padding: 6px;
+  text-align: center;
+  font-size: 20px;
+  color: white;
+}
+
+/* Create two columns/boxes next to each other */
+nav {
+  float: left;
+  width: 20%;
+  background: #ccc;
+  padding: 20px;
+}
+
+article {
+  float: left;
+  padding: 20px;
+  width: 80%;
+  background-color: #f1f1f1;
+}
+
+
+/*places columns/box on top of each other for a small screen */
+@media (max-width: 600px) {
+  nav, article {
+    width: 100%;
+    height: auto;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>ensembldb</h1>
+</header>
+
+<section>
+    <nav>
+    <ul>
+        <h2>Choose</h2>
+        <form method="post">
+            <p>Type your search word:</p>
+        <input type="text" name="answer">
+        <input type="submit" value="Submit">
+        </form>
+    </ul>
+    </nav>
+    <article>
+        <p>Search word: {{answer}}</p>
+        {% for x in range(0,size) %}
+            <th>{{ output[x][0] }}</th><b>{{ answer }}</b><th>{{ output[x][1] }}</th><br>
+        {% endfor %}
+    </article>
+</section>
+</body>
+</html>
