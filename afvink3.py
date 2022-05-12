@@ -1,23 +1,20 @@
 import threading
-import time
 import nltk
 from nltk.corpus import wordnet
-nltk.download('wordnet')
-nltk.download('omw-1.4')
+# nltk.download('wordnet')
+# nltk.download('omw-1.4')
 from datetime import datetime
 import re
+from Bio import Entrez
 
-from Bio import Entrez, Medline
-
-import matplotlib.pyplot as plt
 besthitCompGene = 1
 bestCombie = ""
 
-def searchGeneMole(listMole,listGene):
+
+def searchGeneMole(listMole, listGene):
     bestHitGeneMole = 0
     global bestCombieGeneMole
     print("start")
-    indexTreath = 0
     countmis = 0
     countTotal = 0
 
@@ -28,8 +25,6 @@ def searchGeneMole(listMole,listGene):
     # https://biopython.org/docs/1.75/api/Bio.Entrez.html
 
     date = startdate
-    bestCombie = ""
-    biggestHit = 0
 
     for item in range(0, len(listMole)):
         itemC = listMole[item]
@@ -58,11 +53,11 @@ def searchGeneMole(listMole,listGene):
         print("Percent miss: " + str((countmis / countTotal) * 100))
     print("finish")
 
-def searchGompGene(listComp,listGene):
+
+def searchGompGene(listComp, listGene):
     bestHitCompGene = 0
     global bestCombieCompGene
     print("start")
-    indexTreath = 0
     countmis = 0
     countTotal = 0
 
@@ -73,9 +68,6 @@ def searchGompGene(listComp,listGene):
     # https://biopython.org/docs/1.75/api/Bio.Entrez.html
 
     date = startdate
-    bestCombie = ""
-    biggestHit = 0
-
     for item in range(0, len(listComp)):
         itemC = listCompounds[item]
         for itemM in listGene:
@@ -97,18 +89,17 @@ def searchGompGene(listComp,listGene):
     print("results>>combo1>>>>")
     print(bestCombieCompGene)
     print(bestHitCompGene)
-    print("Hits: " + str(biggestHit))
     if countmis == 0:
         print("Percent miss: 0")
     else:
         print("Percent miss: " + str((countmis / countTotal) * 100))
     print("finish")
 
-def searchGompMole(listComp,listMole):
+
+def searchGompMole(listComp, listMole):
     bestHitCompMole = 0
     global bestCombieCompMole
     print("start")
-    indexTreath = 0
     countmis = 0
     countTotal = 0
 
@@ -119,11 +110,9 @@ def searchGompMole(listComp,listMole):
     # https://biopython.org/docs/1.75/api/Bio.Entrez.html
 
     date = startdate
-    bestCombie = ""
-    biggestHit = 0
 
     for item in range(0, len(listComp)):
-        itemC = synonyms(listCompounds[item]) # listCompounds[item]
+        itemC = synonyms(listCompounds[item])
         for itemM in listMole:
             countTotal = countTotal + 1
             try:
@@ -143,7 +132,6 @@ def searchGompMole(listComp,listMole):
     print("results>>>>combo2>>")
     print(bestCombieCompMole)
     print(bestHitCompMole)
-    print("Hits: " + str(biggestHit))
     if countmis == 0:
         print("Percent miss: 0")
     else:
@@ -151,6 +139,7 @@ def searchGompMole(listComp,listMole):
     getIDs(bestCombieCompMole)
     articles(getIDs(bestCombieCompMole))
     print("finish")
+
 
 def openFiles():
     compoundsFileName = "c_oef.txt"
@@ -175,8 +164,8 @@ def less(genefile):
             geneList.append(line.strip())
         if not line:
             break
-    print(geneList)
     return geneList
+
 
 def run3Threads():
     t1 = threading.Thread(target=searchGompGene,
@@ -194,6 +183,7 @@ def run3Threads():
     t3.join()
     print("time:")
     print(datetime.now())
+
 
 def run6Threads():
     print(datetime.now())
@@ -213,14 +203,12 @@ def run6Threads():
     t5 = threading.Thread(target=searchGompMole,
                           args=(comppounds2, listMolecular))
 
-
     t1.start()
     t2.start()
     t3.start()
 
     t4.start()
     t5.start()
-
 
     t1.join()
     t2.join()
@@ -231,16 +219,20 @@ def run6Threads():
     print("time:")
     print(datetime.now())
 
+
 def synonyms(word):
     synonyms = []
 
     for syn in wordnet.synsets(word):
         for l in syn.lemmas():
             synonyms.append(l.name())
-    stringSyn = str(set(synonyms)).replace("', '"," OR ").replace("{'","").replace("'}","")
+    stringSyn = str(set(synonyms)).replace("', '", " OR ").replace("{'",
+                                                                   "").replace(
+        "'}", "")
     if stringSyn == 'set()':
         stringSyn = word
     return stringSyn
+
 
 def getIDs(combie):
     startdate = 2010
@@ -252,21 +244,21 @@ def getIDs(combie):
     record = Entrez.read(handle)
     handle.close()
     idlist = record["IdList"]
-    print(idlist)
     return idlist
+
 
 def articles(combie):
     gi_str = ",".join(combie)
-    handle = Entrez.efetch(db="nuccore", id=gi_str, rettype="gb",
+    #handle = Entrez.efetch(db="nuccore", id=gi_str, rettype="gb",
+    #                       retmode="text")
+
+    handle = Entrez.efetch(db="pubmed", id=gi_str, rettype="gb",
                            retmode="text")
     text = handle.read()
     print(text)
+
 
 if __name__ == '__main__':
     listCompounds, listMolecular, geneList = openFiles()
     print(datetime.now())
     run3Threads()
-    articles(bestCombieCompGene)
-    print(bestCombieCompGene)
-    print(bestCombieCompMole)
-    print(bestCombieGeneMole)
